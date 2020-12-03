@@ -61,7 +61,7 @@ app.use(expressLayouts)
 
 
 app.get('/', (_req, res) => {
-  res.sendFile(join(__dirname, './html/home.html'));
+  res.sendFile('./html/home.html', { root: '.' });
 });
 
 app.get("/hello", (_req, res) => {
