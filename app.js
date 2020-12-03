@@ -1,12 +1,12 @@
 import { createRequire } from 'module';
-const require1 = createRequire(import.meta.url);
+const require = createRequire(import.meta.url);
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
 const PORT =3000;
 const app = express();
 import { join } from 'path';
 
-const config = require('./config').default
+const config = require('./config.cjs').default
 const twit =  require('twit')
 
 const T = new twit(config)
