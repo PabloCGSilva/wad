@@ -14,7 +14,7 @@ const T = new twit(config)
 function retweet(searchText) {
     // Params to be passed to the 'search/tweets' API endpoint
     let params = {
-        q : searchText + '',
+        q : searchText + 'Bolsonaro',
         result_type : 'mixed',
         count : 25,
     }
@@ -52,7 +52,7 @@ function retweet(searchText) {
 }
 
 // Run every 60 seconds
-setInterval(function() { retweet('#DataScience OR #DataVisualization'); }, 60000)
+setInterval(function() { retweet('#melhorpresidente'); }, 60000)
 
 
 
