@@ -1,52 +1,67 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const expressLayouts = require('express-ejs-layouts');
+import { createRequire } from 'module';
+const require1 = createRequire(import.meta.url);
+import express from 'express';
+import expressLayouts from 'express-ejs-layouts';
 const PORT =3000;
 const app = express();
-const path = require('path');
-var Twitter = require('twitter');
-var config = require('./config.js');
-var T = new Twitter(config);
+import { join } from 'path';
 
-// Set up your search parameters
-var params = {
-  q: '#director #writer #diretor #roteirista',
-}
-// Initiate your search using the above paramaters
-T.get('search/tweets', params, function(err, data, response) {
-  // If there is no error, proceed
-  if(!err){
-    // Loop through the returned tweets
-    for(let i = 0; i < data.statuses.length; i++){
-      // Get the tweet Id from the returned data
-      let id = { id: data.statuses[i].id_str }
-      // Try to Favorite the selected Tweet
-      T.post('favorites/create', id, function(err, response){
-        // If the favorite fails, log the error message
-        if(err){
-          console.log(err[0].message);
-        }
-        // If the favorite is successful, log the url of the tweet
-        else{
-          let username = response.user.screen_name;
-          let tweetId = response.id_str;
-          console.log('Favorited: ', `https://twitter.com/${username}/status/${tweetId}`)
-        }
-      });
+const config = require('./config').default
+const twit =  require('twit')
+
+const T = new twit(config)
+
+function retweet(searchText) {
+    // Params to be passed to the 'search/tweets' API endpoint
+    let params = {
+        q : searchText + '',
+        result_type : 'mixed',
+        count : 25,
     }
-  } else {
-    console.log(err);
-  }
-})
+
+    T.get('search/tweets', params, function(err_search, data_search, response_search){
+
+        let tweets = data_search.statuses
+        if (!err_search)
+        {
+            let tweetIDList = []
+            for(let tweet of tweets) {
+                tweetIDList.push(tweet.id_str);
+
+                //more code here later...
+            }
+
+            // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
+            for (let tweetID of tweetIDList) {
+                T.post('statuses/retweet/:id', {id : tweetID}, function(err_rt, data_rt, response_rt){
+                    if(!err_rt){
+                        console.log("\n\nRetweeted! ID - " + tweetID)
+                    }
+                    else {
+                        console.log("\nError... Duplication maybe... " + tweetID)
+                        console.log("Error = " + err_rt)
+                    }
+                })
+            }
+        }
+        else {
+            console.log("Error while searching" + err_search)
+            process.exit(1)
+        }
+    })
+}
+
+// Run every 60 seconds
+setInterval(function() { retweet('#DataScience OR #DataVisualization'); }, 60000)
+
 
 
 app.set('view engine', 'ejs')
 app.use(expressLayouts)
-app.use(bodyParser.urlencoded({ extended: true }))
 
 
 app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, './html/home.html'));
+  res.sendFile(join(__dirname, './html/home.html'));
 });
 
 app.get("/hello", (_req, res) => {
