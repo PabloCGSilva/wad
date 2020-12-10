@@ -2,7 +2,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
-const PORT =3000;
+const PORT =8000;
 const app = express();
 import { join } from 'path';
 
@@ -14,50 +14,51 @@ const T = new twit(config)
 function retweet(searchText) {
     // Params to be passed to the 'search/tweets' API endpoint
     let params = {
-        q : searchText + 'Bolsonaro',
+        q : searchText + '',
         result_type : 'mixed',
         count : 25,
     }
+    // Params to be passed to the 'search/tweets' API endpoint
 
-    T.get('search/tweets', params, function(err_search, data_search, response_search){
+    T.get('search/tweets', params, (err_search, data_search, response_search) => {
 
-        let tweets = data_search.statuses
-        if (!err_search)
-        {
-            let tweetIDList = []
-            for(let tweet of tweets) {
-                tweetIDList.push(tweet.id_str);
+            let tweets = data_search.statuses;
+            if (!err_search) {
+                let tweetIDList = [];
+                for (let tweet of tweets) {
+                    tweetIDList.push(tweet.id_str);
 
-                //more code here later...
+                    //more code here later...
+                }
+
+                // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
+                for (let tweetID of tweetIDList) {
+                    T.post('statuses/retweet/:id', { id: tweetID }, function (err_rt, data_rt, response_rt) {
+                        if (!err_rt) {
+                            console.log("\n\nRetweeted! ID - " + tweetID);
+                        }
+                        else {
+                            console.log("\nError... Duplication maybe... " + tweetID);
+                            console.log("Error = " + err_rt);
+                        }
+                    });
+                }
             }
-
-            // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
-            for (let tweetID of tweetIDList) {
-                T.post('statuses/retweet/:id', {id : tweetID}, function(err_rt, data_rt, response_rt){
-                    if(!err_rt){
-                        console.log("\n\nRetweeted! ID - " + tweetID)
-                    }
-                    else {
-                        console.log("\nError... Duplication maybe... " + tweetID)
-                        console.log("Error = " + err_rt)
-                    }
-                })
+            else {
+                console.log("Error while searching" + err_search);
+                process.exit(1);
             }
-        }
-        else {
-            console.log("Error while searching" + err_search)
-            process.exit(1)
-        }
-    })
+        })
 }
 
 // Run every 60 seconds
-setInterval(function() { retweet('#melhorpresidente'); }, 60000)
+setInterval(function() { retweet('#Libery OR #Libertarian OR #Ancap OR #Cyclops OR o#BadReligion OR #Metal OR #arts OR #MAGA' ); }, 60000)
 
 
 
 app.set('view engine', 'ejs')
 app.use(expressLayouts)
+app.use(express.static('public'));
 
 
 app.get('/', (_req, res) => {

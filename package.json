@@ -18,6 +18,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-ejs-layouts": "^2.5.0",
+    "mongoose": "^5.11.5",
     "require": "^2.4.20",
     "twit": "^2.2.11",
     "twitter": "^1.7.1"
