@@ -1,58 +1,89 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import express from 'express';
+const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose')
 import expressLayouts from 'express-ejs-layouts';
-const PORT =8000;
+const PORT = 3000;
 const app = express();
 import { join } from 'path';
 
+const dbName = 'test'
+let db
+
+const url = 'mongodb://127.0.0.1:27017/test'
+mongoose.connect(url, { useNewUrlParser: true })
+const db = mongoose.connection
+db.once('open', _ => {
+    console.log('Database connected:', url)
+})
+
+db.on('error', err => {
+    console.error('connection error:', err)
+})
+
+MongoClient.connect(connectionString, { useUnifiedTopology: true })
+    .then(client => {
+        console.log('Connected to Database')
+        const db = client.db('director-and-writer')
+    })
+
+MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+    if (err) return console.log(err)
+
+    // Storing a reference to the database so you can use it later
+    db = client.db(dbName)
+    console.log(`Connected MongoDB: ${url}`)
+    console.log(`Database: ${dbName}`)
+})
+
 const config = require('./config.cjs')
-const twit =  require('twit')
+const twit = require('twit')
 
 const T = new twit(config)
 
 function retweet(searchText) {
     // Params to be passed to the 'search/tweets' API endpoint
     let params = {
-        q : searchText + '',
-        result_type : 'mixed',
-        count : 25,
+        q: searchText + '',
+        result_type: 'mixed',
+        count: 25,
     }
     // Params to be passed to the 'search/tweets' API endpoint
 
     T.get('search/tweets', params, (err_search, data_search, response_search) => {
 
-            let tweets = data_search.statuses;
-            if (!err_search) {
-                let tweetIDList = [];
-                for (let tweet of tweets) {
-                    tweetIDList.push(tweet.id_str);
+        let tweets = data_search.statuses;
+        if (!err_search) {
+            let tweetIDList = [];
+            for (let tweet of tweets) {
+                tweetIDList.push(tweet.id_str);
 
-                    //more code here later...
-                }
+                //more code here later...
+            }
 
-                // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
-                for (let tweetID of tweetIDList) {
-                    T.post('statuses/retweet/:id', { id: tweetID }, function (err_rt, data_rt, response_rt) {
-                        if (!err_rt) {
-                            console.log("\n\nRetweeted! ID - " + tweetID);
-                        }
-                        else {
-                            console.log("\nError... Duplication maybe... " + tweetID);
-                            console.log("Error = " + err_rt);
-                        }
-                    });
-                }
+            // Call the 'statuses/retweet/:id' API endpoint for retweeting EACH of the tweetID
+            for (let tweetID of tweetIDList) {
+                T.post('statuses/retweet/:id', { id: tweetID }, function (err_rt, data_rt, response_rt) {
+                    if (!err_rt) {
+                        console.log("\n\nRetweeted! ID - " + tweetID);
+                    }
+                    else {
+                        console.log("\nError... Duplication maybe... " + tweetID);
+                        console.log("Error = " + err_rt);
+                    }
+                });
             }
-            else {
-                console.log("Error while searching" + err_search);
-                process.exit(1);
-            }
-        })
+        }
+        else {
+            console.log("Error while searching" + err_search);
+            process.exit(1);
+        }
+    })
 }
 
 // Run every 60 seconds
-setInterval(function() { retweet('#Libery OR #Libertarian OR #Ancap OR #Cyclops OR o#BadReligion OR #Metal OR #arts OR #MAGA' ); }, 60000)
+setInterval(function () { retweet('#Libery OR #Libertarian OR #Ancap OR #Cyclops OR o#BadReligion OR #Metal OR #arts OR #MAGA'); }, 60000)
 
 
 
@@ -62,18 +93,18 @@ app.use(express.static('public'));
 
 
 app.get('/', (_req, res) => {
-  res.sendFile('./html/home.html', { root: '.' });
+    res.sendFile('./html/home.html', { root: '.' });
 });
 
 app.get("/hello", (_req, res) => {
-  res.send("Hello world");
+    res.send("Hello world");
 });
 
 
 app.get("/name", (_req, res) => {
-  res.send("name");
+    res.send("name");
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port: ${PORT}!`);
+    console.log(`Example app listening on port: ${PORT}!`);
 });

@@ -7,33 +7,41 @@
 <!--<![endif]-->
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>home</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Rubik:wght@500&display=swap');
-</style>
-<link rel="stylesheet" type="text/css"   href="/css/style.css">
-<script>
-            function change(){
-        onclick  = document.getElementById("name").innerHTML = "TAKASHI MIIKE!"
-      }
-    </script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>home</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Rubik:wght@500&display=swap');
+  </style>
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script>
+    function change() {
+      onclick = document.getElementById("name").innerHTML = "TAKASHI MIIKE!"
+    }
+  </script>
 </head>
 
 <body>
-    <!--[if lt IE 7]>
+  <!--[if lt IE 7]>
       <p class="browsehappy">
         You are using an <strong>outdated</strong> browser. Please
         <a href="#">upgrade your browser</a> to improve your experience.
       </p>
     <![endif]-->
-    <div id="center">
+  <div id="center">
     <p>Written and Directed by</p>
     <p onclick="change()" id="name">Who?</p>
-    </div>
+  </div>
+  <div id="center">
+    <form action="/action_page.php">
+    <p>Insert the name of a director and a writer</p>
+    <input type="text" id="director" name="director"><br><br>
+    <input type="text" id="writer" name="writer"><br><br>
+    <input type="submit" value="Submit">
+    </form>
+  </div> 
 </body>
 
 </html>
