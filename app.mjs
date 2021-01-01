@@ -8,34 +8,41 @@ const PORT = 3000;
 const app = express();
 import { join } from 'path';
 
-const dbName = 'test'
-let db
+var uri = "mongodb://localhost:27017/Directors";
 
-const url = 'mongodb://127.0.0.1:27017/test'
-mongoose.connect(url, { useNewUrlParser: true })
-const db = mongoose.connection
-db.once('open', _ => {
-    console.log('Database connected:', url)
-})
+mongoose.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true });
 
-db.on('error', err => {
-    console.error('connection error:', err)
-})
+const connection = mongoose.connection;
 
-MongoClient.connect(connectionString, { useUnifiedTopology: true })
-    .then(client => {
-        console.log('Connected to Database')
-        const db = client.db('director-and-writer')
-    })
+connection.once("open", function() {
+  console.log("MongoDB database connection established successfully");
+});
 
-MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-    if (err) return console.log(err)
+const directorSchema = new mongoose.Schema({
+    name: String
+});
 
-    // Storing a reference to the database so you can use it later
-    db = client.db(dbName)
-    console.log(`Connected MongoDB: ${url}`)
-    console.log(`Database: ${dbName}`)
-})
+/*const writterSchema = new mongoose.Schema({
+    name: String
+});*/
+
+const Director = mongoose.model('Director', directorSchema);
+
+/*const Writter = mongoose.model('Writter', writterSchema);*/
+
+const quentin = new Director({ name: 'Quentin' });
+console.log(quentin.name); // 'Quentin'
+
+/*const boon = new Writter({ name: 'Boon' });
+console.log(boon.name); // 'Boon'*/
+
+  quentin.save(function (err, quentin) {
+    if (err) return console.error(err);
+  });
+  
+ /*boon.save(function (err, boon) {
+    if (err) return console.error(err);
+  });*/
 
 const config = require('./config.cjs')
 const twit = require('twit')
@@ -100,6 +107,15 @@ app.get("/hello", (_req, res) => {
     res.send("Hello world");
 });
 
+app.get("/fetchdata",(_req, res) => {
+  Director.find({}, function(err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
 
 app.get("/name", (_req, res) => {
     res.send("name");
