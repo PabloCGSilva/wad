@@ -6,6 +6,11 @@ const mongoose = require('mongoose')
 import expressLayouts from 'express-ejs-layouts';
 const PORT = 3000;
 const app = express();
+// Set view engine as EJS
+app.set('view engine', 'ejs')
+app.use(expressLayouts)
+app.use(express.static('public'));
+
 import { join } from 'path';
 
 var uri = "mongodb://localhost:27017/Directors";
@@ -90,21 +95,17 @@ function retweet(searchText) {
 }
 
 // Run every 60 seconds
-setInterval(function () { retweet('#Libery OR #Libertarian OR #Ancap OR #Cyclops OR o#BadReligion OR #Metal OR #arts OR #MAGA'); }, 60000)
+setInterval(function () { retweet('#Libery OR #Libertarian OR #Ancap OR #Cyclops OR #BadReligion OR #Metal OR #arts'); }, 60000)
 
 
 
-app.set('view engine', 'ejs')
-app.use(expressLayouts)
-app.use(express.static('public'));
+
 
 
 app.get('/', (_req, res) => {
-    res.sendFile('./html/home.html', { root: '.' });
-});
-
-app.get("/hello", (_req, res) => {
-    res.send("Hello world");
+    res.render(`${__dirname}/home.html`, {
+        root: '.'
+    });
 });
 
 app.get("/fetchdata",(_req, res) => {
@@ -117,9 +118,6 @@ app.get("/fetchdata",(_req, res) => {
   });
 });
 
-app.get("/name", (_req, res) => {
-    res.send("name");
-});
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port: ${PORT}!`);
