@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+  <%- include('partials/head') %>
+</head>
+
+<header>
+  <%- include('partials/header') %>
+</header>
+
+
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your experience.
+      </p>
+    <![endif]-->
+  <div id="center">
+    <p>Written and Directed by</p>
+    <p onclick="change()" id="name">Who?</p>
+  </div>
+  <div id="center">
+    <form action="/action_page.php">
+      <p>Insert the name of a director and a writer</p>
+      <input type="text" id="director" name="director"><br><br>
+      <input type="text" id="writer" name="writer"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+  <footer>
+    <%- include('/partials/footer') %>
+  </footer>
+
+
+</body>
+
+</html>

@@ -4,12 +4,11 @@ import express from 'express';
 const MongoClient = require('mongodb').MongoClient;
 const mongoose = require('mongoose')
 import expressLayouts from 'express-ejs-layouts';
-const PORT = 3000;
 const app = express();
+const PORT = 3000;
 // Set view engine as EJS
-app.set('view engine', 'ejs')
-app.use(expressLayouts)
-app.use(express.static('public'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 import { join } from 'path';
 
@@ -103,7 +102,7 @@ setInterval(function () { retweet('#Libery OR #Libertarian OR #Ancap OR #Cyclops
 
 
 app.get('/', (_req, res) => {
-    res.render(`${__dirname}/home.html`, {
+    res.render('../views/pages/home.html', {
         root: '.'
     });
 });
