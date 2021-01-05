@@ -8,7 +8,13 @@ const app = express();
 const PORT = 3000;
 // Set view engine as EJS
 app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
+app.use(express.static("public"));
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import { join } from 'path';
 
